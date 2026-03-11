@@ -1,0 +1,306 @@
+{
+  "version": 1,
+  "updated": "2026-03-11",
+  "skills": [
+    {
+      "id": "review-evo",
+      "name": "ReviewEvo",
+      "description": "Self-improving code reviewer that learns your codebase over time. Analyzes git history, spots churn hotspots, identifies risk, and builds a persistent knowledge base that sharpens every review.",
+      "repo": "8co/review-evo",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "review my code",
+        "check this before I push",
+        "code review",
+        "is this code good",
+        "review this PR"
+      ]
+    },
+    {
+      "id": "opentangl",
+      "name": "OpenTangl",
+      "description": "Autonomous development engine. You write the vision, it ships the code. Plans features, writes code, creates PRs, reviews, and merges — across multiple repos.",
+      "repo": "8co/opentangl",
+      "path": "skills/SKILL.md",
+      "requires": ["node", "git", "gh"],
+      "intents": [
+        "build this for me autonomously",
+        "set up autonomous development",
+        "I want AI to write code and create PRs",
+        "auto-pilot my development",
+        "ship code without writing it"
+      ]
+    },
+    {
+      "id": "commit-craft",
+      "name": "CommitCraft",
+      "description": "Analyzes your staged diff, detects the repo's commit message style from history, and generates precise conventional commits. Learns your patterns.",
+      "repo": "8co/commit-craft",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "write a commit message",
+        "help me commit this",
+        "what should the commit message be",
+        "commit these changes",
+        "generate commit message"
+      ]
+    },
+    {
+      "id": "pr-ready",
+      "name": "PR Ready",
+      "description": "Prepares a complete pull request — diff analysis, structured description, reviewer checklist, test plan, and risk flags.",
+      "repo": "8co/pr-ready",
+      "path": "skills/SKILL.md",
+      "requires": ["git", "gh"],
+      "intents": [
+        "prepare a pull request",
+        "create a PR",
+        "write PR description",
+        "get this ready for review",
+        "open a pull request"
+      ]
+    },
+    {
+      "id": "test-gen",
+      "name": "TestGen",
+      "description": "Generates tests for existing code. Detects your testing framework, reads existing test patterns, and produces tests that match your conventions.",
+      "repo": "8co/test-gen",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "write tests for this",
+        "add tests",
+        "I need unit tests",
+        "generate tests",
+        "this needs test coverage"
+      ]
+    },
+    {
+      "id": "debug-flow",
+      "name": "DebugFlow",
+      "description": "Structured debugging workflow — reproduce, isolate, root-cause, fix, verify, prevent. Turns chaotic debugging into a systematic protocol.",
+      "repo": "8co/debug-flow",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "help me debug this",
+        "why is this broken",
+        "find the bug",
+        "this isn't working",
+        "something is wrong with"
+      ]
+    },
+    {
+      "id": "dep-doctor",
+      "name": "DepDoctor",
+      "description": "Full dependency health check — outdated packages, known vulnerabilities, unused dependencies, and license compatibility issues.",
+      "repo": "8co/dep-doctor",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "check my dependencies",
+        "are my packages up to date",
+        "vulnerability check",
+        "audit dependencies",
+        "what needs updating"
+      ]
+    },
+    {
+      "id": "docker-init",
+      "name": "DockerInit",
+      "description": "Generates production-ready Docker configuration for any project. Detects your stack, creates multi-stage Dockerfile, docker-compose, and .dockerignore.",
+      "repo": "8co/docker-init",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "containerize this",
+        "add docker",
+        "create a dockerfile",
+        "dockerize my app",
+        "set up docker compose"
+      ]
+    },
+    {
+      "id": "gh-actions",
+      "name": "GH Actions",
+      "description": "Generates GitHub Actions CI/CD workflow from your project. Detects build commands, test commands, deploy targets — produces a workflow file that matches your setup.",
+      "repo": "8co/gh-actions",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "set up CI",
+        "add GitHub Actions",
+        "automate tests on push",
+        "create CI pipeline",
+        "continuous integration"
+      ]
+    },
+    {
+      "id": "env-guard",
+      "name": "EnvGuard",
+      "description": "Scans your project for leaked secrets, missing .gitignore entries, incomplete env configurations, and mismatched environment variables.",
+      "repo": "8co/env-guard",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "check for secrets",
+        "audit env variables",
+        "is my .env safe",
+        "scan for leaked credentials",
+        "check my gitignore"
+      ]
+    },
+    {
+      "id": "dead-code",
+      "name": "DeadCode",
+      "description": "Finds unused exports, unreachable functions, orphaned files, and stale imports across your codebase. Answers what can I safely delete.",
+      "repo": "8co/dead-code",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "find unused code",
+        "clean up dead code",
+        "what code can I delete",
+        "find orphan files",
+        "remove unused imports"
+      ]
+    },
+    {
+      "id": "perf-audit",
+      "name": "PerfAudit",
+      "description": "Framework-aware performance analysis. Identifies slow renders, N+1 queries, bundle bloat, memory leaks, and unnecessary re-renders — specific to your stack.",
+      "repo": "8co/perf-audit",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "why is this slow",
+        "optimize performance",
+        "profile my app",
+        "performance audit",
+        "speed up my application"
+      ]
+    },
+    {
+      "id": "bundle-diet",
+      "name": "BundleDiet",
+      "description": "Analyzes your JavaScript bundle — what's big, what's unused, what can be lazy-loaded. Produces a concrete size reduction plan with estimated savings.",
+      "repo": "8co/bundle-diet",
+      "path": "skills/SKILL.md",
+      "requires": ["git", "node"],
+      "intents": [
+        "reduce bundle size",
+        "why is my bundle so big",
+        "optimize imports",
+        "analyze bundle",
+        "my app loads slowly"
+      ]
+    },
+    {
+      "id": "security-scan",
+      "name": "SecurityScan",
+      "description": "OWASP-aware security audit for web applications. Checks for injection, XSS, auth issues, insecure configurations, and dependency CVEs — tuned to your framework.",
+      "repo": "8co/security-scan",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "check for vulnerabilities",
+        "security audit",
+        "is this code secure",
+        "find security issues",
+        "penetration test this"
+      ]
+    },
+    {
+      "id": "api-docs",
+      "name": "APIDocs",
+      "description": "Generates API documentation from your actual handlers and routes. Outputs OpenAPI/Swagger spec or markdown — stays in sync with code.",
+      "repo": "8co/api-docs",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "document my API",
+        "generate API docs",
+        "create endpoint documentation",
+        "swagger docs",
+        "openapi spec"
+      ]
+    },
+    {
+      "id": "git-rescue",
+      "name": "GitRescue",
+      "description": "Decision tree for common git disasters. Wrong branch, bad merge, lost commits, detached HEAD, force push recovery — the git undo button.",
+      "repo": "8co/git-rescue",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "fix my git",
+        "undo last commit",
+        "resolve merge conflict",
+        "git is messed up",
+        "recover lost commits"
+      ]
+    },
+    {
+      "id": "readme-craft",
+      "name": "ReadmeCraft",
+      "description": "Generates a comprehensive README from your project structure, package.json, and codebase. Not a template — reads your actual project and writes a real README.",
+      "repo": "8co/readme-craft",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "create a readme",
+        "write project readme",
+        "generate README",
+        "this project needs a readme",
+        "document this project"
+      ]
+    },
+    {
+      "id": "refactor-safe",
+      "name": "RefactorSafe",
+      "description": "Multi-step refactoring with verification gates at each stage. Rename, restructure, extract, consolidate — with proof that nothing broke at every step.",
+      "repo": "8co/refactor-safe",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "refactor this safely",
+        "rename across the codebase",
+        "restructure this module",
+        "extract this into a separate file",
+        "consolidate these duplicates"
+      ]
+    },
+    {
+      "id": "migration-pilot",
+      "name": "MigrationPilot",
+      "description": "Framework and library version migration with breaking change detection. Upgrades major versions step-by-step with verification between each change.",
+      "repo": "8co/migration-pilot",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "upgrade my dependencies",
+        "migrate to the latest version",
+        "update this framework",
+        "breaking changes when upgrading",
+        "help me migrate"
+      ]
+    },
+    {
+      "id": "license-check",
+      "name": "LicenseCheck",
+      "description": "Scans all dependencies for license compatibility. Flags copyleft licenses in proprietary projects, missing licenses, and license conflicts.",
+      "repo": "8co/license-check",
+      "path": "skills/SKILL.md",
+      "requires": ["git"],
+      "intents": [
+        "check dependency licenses",
+        "can I use this commercially",
+        "license audit",
+        "are my dependencies open source safe",
+        "GPL check"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "undertow",
+  "version": "0.1.0",
+  "tagline": "One skill to find them all — 20+ developer workflow skills",
+  "description": "Skill discovery engine for AI coding agents. Recommends and installs the right skill when you need it — code review, test generation, debugging, commit messages, PR preparation, security scanning, dependency audits, Docker setup, CI/CD pipelines, API documentation, refactoring, performance optimization, bundle analysis, git recovery, README generation, and more. Part of the Undertow collection.",
+  "category": "Development Tools",
+  "tags": [
+    "skill-discovery",
+    "cursor-skills",
+    "ai-agent",
+    "developer-tools",
+    "code-quality",
+    "devops",
+    "testing",
+    "security",
+    "documentation",
+    "workflow-automation",
+    "openclaw",
+    "clawhub",
+    "vibe-coding",
+    "ai-coding-assistant",
+    "skill-marketplace"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "opentangl",
+    "github": "https://github.com/8co"
+  },
+  "repository": "https://github.com/8co/undertow",
+  "homepage": "https://github.com/8co/undertow",
+  "support": {
+    "issues": "https://github.com/8co/undertow/issues"
+  },
+  "requires": {
+    "bins": ["git"]
+  },
+  "entry": "SKILL.md"
+}
