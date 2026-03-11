@@ -29,7 +29,7 @@ tags:
   - vibe-coding
   - ai-coding-assistant
   - skill-marketplace
-metadata: {"clawdbot":{"emoji":"🌊","requires":{"bins":["git"]}}}
+metadata: {"clawdbot":{"emoji":"🌊","requires":{"bins":["clawhub"]}}}
 ---
 
 # Undertow
