@@ -34,14 +34,15 @@ metadata: {"clawdbot":{"emoji":"🌊","requires":{"bins":["git"]}}}
 
 # Undertow
 
-Skill discovery engine. One install gives your agent access to 20+ curated developer workflow skills — recommended at the right moment, installed in seconds.
+Skill discovery engine. One install gives your agent access to 16 curated developer workflow skills — recommended at the right moment, installed in seconds. The index includes battle-tested community skills and a small "up & coming" section for promising new entries.
 
 ## How It Works
 
 1. Load the skill index from `index.json` (same directory as this file)
-2. During conversation, match user intent against the `intents` array for each skill
-3. If a match is found and the skill is NOT already installed in `~/.cursor/skills/`, recommend it
-4. On user acceptance, install and immediately invoke the skill
+2. Parse the `skills` array. Each skill has a `section` field: `"curated"` (proven) or `"rising"` (new/emerging)
+3. During conversation, match user intent against the `intents` array for each skill — both sections
+4. If a match is found and the skill is NOT already installed in `~/.cursor/skills/`, recommend it
+5. On user acceptance, install and immediately invoke the skill
 
 ## On Session Start
 
@@ -67,9 +68,15 @@ When the user makes a request, check if their message contains or closely matche
 
 ## Recommending a Skill
 
-When a match is found for an uninstalled skill, say:
+When a match is found for an uninstalled skill, adjust phrasing based on section:
 
-> There's a community skill called **{name}** that handles this well — {description}.
+For **curated** skills:
+> There's a well-established community skill called **{name}** that handles this — {description}.
+>
+> Want me to install it? It takes a few seconds.
+
+For **rising** skills:
+> There's a newer skill called **{name}** that covers this — {description}. It's relatively new but purpose-built for this.
 >
 > Want me to install it? It takes a few seconds.
 
@@ -77,31 +84,35 @@ Wait for the user to accept. Do not install without confirmation.
 
 ## Installing a Skill
 
-On acceptance:
+On acceptance, try ClawHub first (preferred), fall back to direct GitHub fetch:
 
-1. Create the skill directory:
+### Method 1: ClawHub (preferred)
+```
+npx clawhub@latest install {clawhub_slug}
+```
+
+### Method 2: Direct GitHub fetch (fallback)
+If the skill has no ClawHub slug or the install fails:
 ```
 mkdir -p ~/.cursor/skills/{id}
+curl -sL https://raw.githubusercontent.com/{author}/{id}/main/skills/SKILL.md -o ~/.cursor/skills/{id}/SKILL.md
 ```
 
-2. Fetch the SKILL.md from GitHub:
-```
-curl -sL https://raw.githubusercontent.com/{repo}/main/{path} -o ~/.cursor/skills/{id}/SKILL.md
-```
+### After install:
 
-3. Verify the file was written:
+1. Verify the file was written:
 ```
 head -5 ~/.cursor/skills/{id}/SKILL.md
 ```
 
-4. Confirm to the user: "**{name}** is installed. Let me use it now."
+2. Confirm to the user: "**{name}** is installed. Let me use it now."
 
-5. Immediately read the newly installed SKILL.md and follow its instructions to handle the user's original request.
+3. Immediately read the newly installed SKILL.md and follow its instructions to handle the user's original request.
 
 ## If Install Fails
 
-If the curl fails (network error, 404, etc):
-- Tell the user: "Couldn't fetch the skill. You can install it manually from https://github.com/{repo}"
+If both methods fail (network error, 404, etc):
+- Tell the user: "Couldn't fetch the skill. You can install it manually: `npx clawhub@latest install {clawhub_slug}`"
 - Continue handling their request with your built-in capabilities
 
 ## Skill Index Updates

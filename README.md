@@ -14,30 +14,35 @@ npx clawhub@latest install undertow
 
 When you say "review my code," your agent checks if you have a code review skill installed. If not, Undertow recommends one and installs it in seconds. No browsing. No searching. The right skill, at the right moment.
 
-## Skills Available
+## Curated Skills
 
-| Skill | What it does |
-|-------|-------------|
-| [ReviewEvo](https://github.com/8co/review-evo) | Self-improving code reviewer that learns your codebase |
-| [OpenTangl](https://github.com/8co/opentangl) | Autonomous dev engine — vision in, shipped code out |
-| CommitCraft | Smart commit messages that match your repo's style |
-| PR Ready | Pull request prep with diff analysis and reviewer checklist |
-| TestGen | Framework-aware test generation from existing patterns |
-| DebugFlow | Systematic debugging — reproduce, isolate, fix, verify |
-| DepDoctor | Dependency health check — outdated, vulnerable, unused |
-| DockerInit | Production-ready Docker config from your actual stack |
-| GH Actions | CI/CD workflows that match your build setup |
-| EnvGuard | Secret detection and env variable audit |
-| DeadCode | Find unused exports, orphan files, stale imports |
-| PerfAudit | Framework-aware performance analysis |
-| BundleDiet | Bundle size analysis with concrete reduction plan |
-| SecurityScan | OWASP-aware security audit tuned to your framework |
-| APIDocs | API documentation generated from your actual handlers |
-| GitRescue | Decision tree for common git disasters |
-| ReadmeCraft | READMEs generated from your actual project |
-| RefactorSafe | Multi-step refactoring with verification gates |
-| MigrationPilot | Version migration with breaking change detection |
-| LicenseCheck | Dependency license compatibility scan |
+Battle-tested community skills with real adoption, handpicked for quality and clear intent.
+
+| Skill | Author | What it does |
+|-------|--------|-------------|
+| [Debug Pro](https://clawhub.ai/skills/debug-pro) | @cmanfire7 | 7-step debugging protocol across multiple environments |
+| [Git Essentials](https://clawhub.ai/skills/git-essentials) | @Arnarsson | Essential Git commands and workflows for version control |
+| [Security Auditor](https://clawhub.ai/skills/security-auditor) | @jgarrison929 | OWASP Top 10, secrets handling, input validation, auth flows |
+| [Test Runner](https://clawhub.ai/skills/test-runner) | @cmanfire7 | Write, run, and manage unit/integration/E2E tests |
+| [Code Review](https://clawhub.ai/skills/code-review) | @wpank | Systematic code review for security, perf, and maintainability |
+| [Git Workflows](https://clawhub.ai/skills/git-workflows) | @gitgoodordietrying | Rebasing, bisecting, worktrees, reflog recovery, conflict resolution |
+| [Conventional Commits](https://clawhub.ai/skills/conventional-commits) | @bastos | Commit messages using the Conventional Commits spec |
+| [Security Audit Toolkit](https://clawhub.ai/skills/security-audit-toolkit) | @gitgoodordietrying | Dependency scanning, secret detection, SSL/TLS verification |
+| [Docker](https://clawhub.ai/skills/docker) | @ivangdavila | Containers, Compose stacks, networking, production hardening |
+| [API Development](https://clawhub.ai/skills/api-dev) | @gitgoodordietrying | Scaffold, test, document, and debug REST and GraphQL APIs |
+| [PR Reviewer](https://clawhub.ai/skills/pr-reviewer) | @briancolinger | Automated PR review with diff analysis and structured reports |
+| [CI/CD Pipeline](https://clawhub.ai/skills/cicd-pipeline) | @gitgoodordietrying | GitHub Actions workflows, matrix builds, secrets, caching |
+| [Codebase Documenter](https://clawhub.ai/skills/codebase-documenter) | @Veeramanikandan | README files, architecture docs, code comments, API docs |
+| [Performance Profiler](https://clawhub.ai/skills/perf-profiler) | @gitgoodordietrying | CPU/memory profiling, flame graphs, benchmarks, load testing |
+
+## Up & Coming
+
+New skills showing strong potential. Included early because they fill gaps nothing else covers.
+
+| Skill | Author | What it does |
+|-------|--------|-------------|
+| [ReviewEvo](https://github.com/8co/review-evo) | @8co | Self-improving code reviewer that learns your codebase over time |
+| [OpenTangl](https://github.com/8co/opentangl) | @8co | Autonomous dev engine — vision in, shipped code out |
 
 ## How It Works
 
@@ -57,9 +62,11 @@ That's it. Undertow is a pure markdown skill with a JSON index. No runtime code,
 ## For Skill Authors
 
 Want your skill in the Undertow index? Open an issue with:
-- Your skill's GitHub repo URL
+- Your skill's ClawHub slug or GitHub repo URL
 - A one-line description
 - 3-5 intent phrases (what would a user say when they need this?)
+
+Skills are evaluated on: quality of SKILL.md, clear intent coverage, real adoption (downloads/stars), and whether they fill a gap in the current index.
 
 ## License
 
