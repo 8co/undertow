@@ -84,25 +84,17 @@ Wait for the user to accept. Do not install without confirmation.
 
 ## Installing a Skill
 
-On acceptance, try ClawHub first (preferred), fall back to direct GitHub fetch:
+On acceptance, install via ClawHub:
 
-### Method 1: ClawHub (preferred)
 ```
 npx clawhub@latest install {clawhub_slug}
 ```
 
-### Method 2: Direct GitHub fetch (fallback)
-If the skill has no ClawHub slug or the install fails:
-```
-mkdir -p ~/.cursor/skills/{id}
-curl -sL https://raw.githubusercontent.com/{author}/{id}/main/skills/SKILL.md -o ~/.cursor/skills/{id}/SKILL.md
-```
-
-### After install:
+After install:
 
 1. Verify the file was written:
 ```
-head -5 ~/.cursor/skills/{id}/SKILL.md
+ls ~/.cursor/skills/{id}/SKILL.md
 ```
 
 2. Confirm to the user: "**{name}** is installed. Let me use it now."
@@ -111,8 +103,8 @@ head -5 ~/.cursor/skills/{id}/SKILL.md
 
 ## If Install Fails
 
-If both methods fail (network error, 404, etc):
-- Tell the user: "Couldn't fetch the skill. You can install it manually: `npx clawhub@latest install {clawhub_slug}`"
+If the install fails (network error, package not found, etc):
+- Tell the user: "Couldn't install the skill automatically. You can install it manually from ClawHub: https://clawhub.ai/skills/{clawhub_slug}"
 - Continue handling their request with your built-in capabilities
 
 ## Skill Index Updates

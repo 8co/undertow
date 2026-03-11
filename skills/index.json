@@ -169,7 +169,7 @@
       "id": "api-dev",
       "name": "API Development",
       "section": "curated",
-      "description": "Scaffold, test, document, and debug REST and GraphQL APIs. Generate OpenAPI specs, test with curl, mock APIs, and troubleshoot endpoints.",
+      "description": "Scaffold, test, document, and debug REST and GraphQL APIs. Generate OpenAPI specs, mock APIs, and troubleshoot endpoints.",
       "clawhub_slug": "api-dev",
       "author": "@gitgoodordietrying",
       "downloads": 5500,
