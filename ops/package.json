@@ -1,0 +1,9 @@
+{
+  "name": "undertow-ops",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "scan": "npx tsx scripts/scan-prospects.ts",
+    "scan:dry": "npx tsx scripts/scan-prospects.ts --dry-run"
+  }
+}
