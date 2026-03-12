@@ -60,7 +60,7 @@ We ran a review as part of our index evaluation. A few suggestions that could he
 
 ### Intent Phrases
 
-If you're optimizing for agent-based discovery, these are phrases users might say when they need your skill:
+If you're optimizing for discovery, these are phrases users might say when they need your skill:
 
 {3-5 intent phrases as bullet points}
 
