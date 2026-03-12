@@ -4,7 +4,7 @@
   "author_handle": "@mrjessek",
   "author_avatar": "https://avatars.githubusercontent.com/u/153573002?v=4",
   "github_profile": "https://github.com/mrjessek",
-  "github_repo": null,
+  "github_repo": "https://github.com/mrjessek/shang-tsung",
   "clawhub_url": "https://clawhub.ai/skills/shang-tsung",
   "description": "Persistent memory and identity continuity for AI agents. Combines Second Brain (PROOF_OF_LIFE, daily logs, long-term MEMORY.md) with SOULS session lineage. E...",
   "license": "MIT-0",
@@ -18,7 +18,7 @@
   "created_at": "2026-03-12T21:52:50.543Z",
   "updated_at": "2026-03-12T21:56:46.712Z",
   "discovered_at": "2026-03-12T21:57:10.581Z",
-  "status": "new",
+  "status": "outreach_sent",
   "has_skill_md": true,
-  "notes": ""
+  "notes": "Issue #1 posted 2026-03-12. Repo starred."
 }
