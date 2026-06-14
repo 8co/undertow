@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "scan": "npx tsx scripts/scan-prospects.ts",
-    "scan:dry": "npx tsx scripts/scan-prospects.ts --dry-run"
+    "scan:dry": "npx tsx scripts/scan-prospects.ts --dry-run",
+    "scan:recent": "npx tsx scripts/scan-prospects.ts --max-age-days 30 --dry-run"
   }
 }
