@@ -263,6 +263,14 @@
       "author": "@8co",
       "downloads": null,
       "stars": null,
+      "tags": [
+        "code-review",
+        "git",
+        "technical-debt",
+        "codebase-health",
+        "risk-analysis",
+        "continuous-improvement"
+      ],
       "intents": [
         "review my code and learn my patterns",
         "codebase health check",
@@ -280,6 +288,14 @@
       "author": "@8co",
       "downloads": null,
       "stars": null,
+      "tags": [
+        "autonomous-development",
+        "ai-agent",
+        "code-generation",
+        "pull-requests",
+        "multi-repo",
+        "workflow-automation"
+      ],
       "intents": [
         "build this for me autonomously",
         "set up autonomous development",
