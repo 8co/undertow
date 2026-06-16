@@ -19,7 +19,27 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROSPECTS_DIR = join(__dirname, "..", "prospects");
 const LOG_PATH = join(__dirname, "..", "outreach", "log.md");
+const RISING_PATH = join(__dirname, "..", "..", "skills", "rising.json");
 const UNDERTOW_REPO = "8co/undertow";
+
+interface RisingEntry {
+  id: string;
+  name: string;
+  clawhub_slug: string;
+  clawhub_url: string;
+  github_repo: string | null;
+  author: string;
+  description: string;
+  added: string;
+  review_issue: string;
+}
+
+interface RisingIndex {
+  version: number;
+  updated: string;
+  description: string;
+  skills: RisingEntry[];
+}
 
 interface ProspectProfile {
   slug: string;
@@ -70,6 +90,26 @@ function loadOutreachSentProspects(): ProspectProfile[] {
 function saveProfile(profile: ProspectProfile): void {
   const path = join(PROSPECTS_DIR, profile.slug, "profile.json");
   writeFileSync(path, JSON.stringify(profile, null, 2) + "\n");
+}
+
+function addToRising(profile: ProspectProfile): void {
+  const rising: RisingIndex = JSON.parse(readFileSync(RISING_PATH, "utf-8"));
+  const alreadyIn = rising.skills.some((s) => s.id === profile.slug);
+  if (alreadyIn) return;
+
+  rising.skills.push({
+    id: profile.slug,
+    name: profile.name,
+    clawhub_slug: profile.slug,
+    clawhub_url: `https://clawhub.ai/skills/${profile.slug}`,
+    github_repo: profile.github_repo,
+    author: profile.author_handle,
+    description: profile.description as string,
+    added: new Date().toISOString().slice(0, 10),
+    review_issue: profile.issue_url,
+  });
+  rising.updated = new Date().toISOString().slice(0, 10);
+  writeFileSync(RISING_PATH, JSON.stringify(rising, null, 2) + "\n");
 }
 
 function appendLog(slug: string, name: string, issueUrl: string): void {
@@ -128,8 +168,10 @@ async function main() {
       profile.status = "follow_up_sent";
       profile.notes += ` Follow-up comment posted ${new Date().toISOString().slice(0, 10)}.`;
       saveProfile(profile);
+      addToRising(profile);
       appendLog(profile.slug, profile.name, profile.issue_url);
       console.log(`    ✓ Profile updated → follow_up_sent`);
+      console.log(`    ✓ Added to skills/rising.json`);
     }
   }
 
