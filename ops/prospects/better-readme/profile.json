@@ -20,5 +20,6 @@
   "discovered_at": "2026-06-14T23:32:00.000Z",
   "status": "outreach_sent",
   "has_skill_md": true,
-  "notes": "Issue #1 posted 2026-06-14. Repo starred on GitHub + ClawHub."
+  "notes": "Issue #1 posted 2026-06-14. Repo starred on GitHub + ClawHub.",
+  "issue_url": "https://github.com/Thomaszhou22/better-readme/issues/1"
 }

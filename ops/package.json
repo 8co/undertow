@@ -5,6 +5,8 @@
   "scripts": {
     "scan": "npx tsx scripts/scan-prospects.ts",
     "scan:dry": "npx tsx scripts/scan-prospects.ts --dry-run",
-    "scan:recent": "npx tsx scripts/scan-prospects.ts --max-age-days 30 --dry-run"
+    "scan:recent": "npx tsx scripts/scan-prospects.ts --max-age-days 30 --dry-run",
+    "check-stars": "npx tsx scripts/check-stars.ts",
+    "check-stars:dry": "npx tsx scripts/check-stars.ts --dry-run"
   }
 }

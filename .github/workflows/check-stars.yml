@@ -1,0 +1,40 @@
+name: Check Prospect Stars
+
+on:
+  schedule:
+    # Runs daily at 9:00 AM UTC
+    - cron: "0 9 * * *"
+  workflow_dispatch: # Allow manual trigger from Actions tab
+
+jobs:
+  check-stars:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # needed to commit profile status updates
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run star checker
+        working-directory: ops
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: npx tsx scripts/check-stars.ts
+
+      - name: Commit profile updates (if any)
+        run: |
+          git config user.name "undertow-bot"
+          git config user.email "bot@undertow"
+          git add ops/prospects ops/outreach/log.md
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto: follow-up sent to $(git diff --cached --name-only | grep profile.json | xargs -I{} basename $(dirname {}))"
+            git push
+          fi
