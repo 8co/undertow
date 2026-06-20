@@ -1,9 +1,16 @@
 /**
- * Check if any outreach_sent prospects have starred the Undertow repo.
- * For each match: post a follow-up comment on their GitHub issue and
- * update their profile status to follow_up_sent.
+ * Check if any outreach_sent or star_received prospects have completed
+ * their evaluation signals (star, follow, reply) on the Undertow repo.
  *
- * Designed to run as a GitHub Actions cron job (daily).
+ * Signal logic:
+ *   outreach_sent + starred (no follow) → status: star_received, nudge for follow + reply
+ *   outreach_sent + starred + followed  → status: follow_up_sent, added to rising.json
+ *   star_received + now followed        → status: follow_up_sent, added to rising.json
+ *   any status     + reply detected     → mark has_replied: true on profile
+ *
+ * Nudge comments only fire on status transitions — never repeated.
+ *
+ * Designed to run as a GitHub Actions cron job (daily at 9am UTC).
  * Requires GH_TOKEN with public_repo scope — set as GH_PAT secret in Actions.
  *
  * Usage:
@@ -21,6 +28,7 @@ const PROSPECTS_DIR = join(__dirname, "..", "prospects");
 const LOG_PATH = join(__dirname, "..", "outreach", "log.md");
 const RISING_PATH = join(__dirname, "..", "..", "skills", "rising.json");
 const UNDERTOW_REPO = "8co/undertow";
+const BOT_HANDLE = "8co";
 
 interface RisingEntry {
   id: string;
@@ -47,7 +55,9 @@ interface ProspectProfile {
   author_handle: string;
   github_repo: string | null;
   issue_url: string;
-  status: "new" | "reviewed" | "outreach_sent" | "follow_up_sent" | "indexed" | "skipped";
+  description: string;
+  status: "new" | "reviewed" | "outreach_sent" | "star_received" | "follow_up_sent" | "indexed" | "skipped";
+  has_replied: boolean;
   notes: string;
   [key: string]: unknown;
 }
@@ -89,13 +99,35 @@ function getFollowers(): Set<string> {
   return logins;
 }
 
-function loadOutreachSentProspects(): ProspectProfile[] {
+function parseIssueUrl(issueUrl: string): { owner: string; repo: string; number: number } | null {
+  const match = issueUrl.match(/github\.com\/([^/]+)\/([^/]+)\/issues\/(\d+)/);
+  if (!match) return null;
+  return { owner: match[1], repo: match[2], number: parseInt(match[3]) };
+}
+
+function hasExternalReply(issueUrl: string): boolean {
+  const parsed = parseIssueUrl(issueUrl);
+  if (!parsed) return false;
+  try {
+    const raw = gh(`api "repos/${parsed.owner}/${parsed.repo}/issues/${parsed.number}/comments"`);
+    const comments: { user: { login: string } }[] = JSON.parse(raw);
+    return comments.some((c) => c.user.login.toLowerCase() !== BOT_HANDLE.toLowerCase());
+  } catch {
+    return false;
+  }
+}
+
+function loadActiveProspects(): ProspectProfile[] {
   const prospects: ProspectProfile[] = [];
   for (const slug of readdirSync(PROSPECTS_DIR)) {
     const profilePath = join(PROSPECTS_DIR, slug, "profile.json");
     if (!existsSync(profilePath)) continue;
-    const profile: ProspectProfile = JSON.parse(readFileSync(profilePath, "utf-8"));
-    if (profile.status === "outreach_sent" && profile.issue_url) {
+    const profile = JSON.parse(readFileSync(profilePath, "utf-8")) as ProspectProfile;
+    if (
+      (profile.status === "outreach_sent" || profile.status === "star_received") &&
+      profile.issue_url
+    ) {
+      if (profile.has_replied === undefined) profile.has_replied = false;
       prospects.push(profile);
     }
   }
@@ -109,9 +141,7 @@ function saveProfile(profile: ProspectProfile): void {
 
 function addToRising(profile: ProspectProfile): void {
   const rising: RisingIndex = JSON.parse(readFileSync(RISING_PATH, "utf-8"));
-  const alreadyIn = rising.skills.some((s) => s.id === profile.slug);
-  if (alreadyIn) return;
-
+  if (rising.skills.some((s) => s.id === profile.slug)) return;
   rising.skills.push({
     id: profile.slug,
     name: profile.name,
@@ -119,7 +149,7 @@ function addToRising(profile: ProspectProfile): void {
     clawhub_url: `https://clawhub.ai/skills/${profile.slug}`,
     github_repo: profile.github_repo,
     author: profile.author_handle,
-    description: profile.description as string,
+    description: profile.description,
     added: new Date().toISOString().slice(0, 10),
     review_issue: profile.issue_url,
   });
@@ -129,87 +159,124 @@ function addToRising(profile: ProspectProfile): void {
 
 function appendLog(slug: string, name: string, issueUrl: string, signals: string): void {
   const today = new Date().toISOString().slice(0, 10);
-  const line = `| ${today} | Follow-up: ${name} | ${slug} | — | [comment](${issueUrl}) | ${signals} |\n`;
+  const line = `| ${today} | Signal: ${name} | ${slug} | — | [issue](${issueUrl}) | ${signals} |\n`;
   const log = readFileSync(LOG_PATH, "utf-8");
   writeFileSync(LOG_PATH, log + line);
 }
 
-function postFollowUp(profile: ProspectProfile, hasFollowed: boolean, dryRun: boolean): void {
-  const [owner] = UNDERTOW_REPO.split("/");
-  const missingFollow = !hasFollowed;
-
-  const body = missingFollow
-    ? [
-        `Hey — noticed you starred the [Undertow repo](https://github.com/${UNDERTOW_REPO}) after our review. Almost there!`,
-        ``,
-        `One step left to complete your evaluation — follow [@${owner}](https://github.com/${owner}):`,
-        ``,
-        "```",
-        `gh api --method PUT user/following/${owner}`,
-        "```",
-        ``,
-        `Once that's done we'll add **${profile.name}** to the Rising index and follow up here. Takes one turn for your agent.`,
-      ].join("\n")
-    : [
-        `Signal received — starred and following. **${profile.name}** is being added to the [Reviewed & Rising](https://github.com/${UNDERTOW_REPO}#reviewed--rising) section of the Undertow index.`,
-        ``,
-        `We'll follow up here once it's live. If you have questions about the review suggestions or the index, just reply.`,
-      ].join("\n");
-
+function postComment(issueUrl: string, body: string, dryRun: boolean): void {
   if (dryRun) {
-    console.log(`  [dry run] Would comment on: ${profile.issue_url}`);
-    console.log(`  [dry run] Has followed: ${hasFollowed}`);
-    console.log(`  [dry run] Body preview: "${body.slice(0, 100)}..."`);
+    console.log(`    [dry run] Comment on ${issueUrl}:`);
+    console.log(`    [dry run] "${body.slice(0, 120)}..."`);
     return;
   }
+  gh(`issue comment "${issueUrl}" --body "${body.replace(/`/g, "\\`").replace(/"/g, '\\"')}"`);
+}
 
-  gh(`issue comment "${profile.issue_url}" --body "${body.replace(/"/g, '\\"')}"`);
+function nudgeComment(profile: ProspectProfile): string {
+  const [owner] = UNDERTOW_REPO.split("/");
+  return [
+    `Thanks for the star — one step left to complete your evaluation.`,
+    ``,
+    `We've already starred your repo. The return signal is follow + reply:`,
+    ``,
+    `**Step 1** — Follow [@${owner}](https://github.com/${owner}):`,
+    "```",
+    `gh api --method PUT user/following/${owner}`,
+    "```",
+    `**Step 2** — Reply here to confirm.`,
+    ``,
+    `Undertow is fully automated — stars and follows are how the pipeline tracks queue priority. Once both signals register, **${profile.name}** moves to the front. We follow up within 24 hours.`,
+  ].join("\n");
+}
+
+function liveComment(profile: ProspectProfile): string {
+  return [
+    `All signals received — starred, following, and confirmed. **${profile.name}** is being added to the [Reviewed & Rising](https://github.com/${UNDERTOW_REPO}#reviewed--rising) section of the Undertow index.`,
+    ``,
+    `We'll follow up here once it's live. If you have questions about the review suggestions or want to discuss the index, just reply.`,
+  ].join("\n");
 }
 
 async function main() {
   const dryRun = isDryRun();
 
-  console.log(`\n🌊 Undertow Star + Follow Checker${dryRun ? " (dry run)" : ""}\n`);
+  console.log(`\n🌊 Undertow Signal Checker${dryRun ? " (dry run)" : ""}\n`);
 
-  console.log("Fetching Undertow stargazers and followers...");
+  console.log("Fetching stargazers, followers...");
   const stargazers = getStargazers();
   const followers = getFollowers();
-  console.log(`  ${stargazers.size} stargazers, ${followers.size} followers\n`);
+  console.log(`  ${stargazers.size} stargazers  ${followers.size} followers\n`);
 
-  const prospects = loadOutreachSentProspects();
-  console.log(`  ${prospects.length} prospects with status outreach_sent\n`);
+  const prospects = loadActiveProspects();
+  console.log(`  ${prospects.length} active prospects (outreach_sent or star_received)\n`);
 
-  let matched = 0;
+  let transitions = 0;
 
   for (const profile of prospects) {
     const handle = profile.author_handle.replace(/^@/, "").toLowerCase();
     const hasStarred = stargazers.has(handle);
     const hasFollowed = followers.has(handle);
 
-    const signals = `${hasStarred ? "⭐" : "·"} star  ${hasFollowed ? "👤" : "·"} follow`;
-    console.log(`  ${profile.name} (@${handle})  ${signals}`);
+    const starIcon = hasStarred ? "⭐" : "·";
+    const followIcon = hasFollowed ? "👤" : "·";
+    const replyIcon = profile.has_replied ? "💬" : "·";
+    console.log(`  ${profile.name} (@${handle})  ${starIcon}star  ${followIcon}follow  ${replyIcon}reply  [${profile.status}]`);
 
+    // Check for reply on any active prospect (only if not already marked)
+    if (!profile.has_replied) {
+      const replied = hasExternalReply(profile.issue_url);
+      if (replied) {
+        profile.has_replied = true;
+        console.log(`    💬 Reply detected — marking profile`);
+        if (!dryRun) saveProfile(profile);
+      }
+    }
+
+    // Star is the primary trigger — nothing fires without it
     if (!hasStarred) continue;
 
-    matched++;
-    console.log(`    → Starred — posting follow-up (followed: ${hasFollowed})`);
+    if (!hasFollowed) {
+      // Starred but not followed — nudge once on first detection
+      if (profile.status === "outreach_sent") {
+        console.log(`    → Star only — nudging for follow + reply`);
+        postComment(profile.issue_url, nudgeComment(profile), dryRun);
+        if (!dryRun) {
+          profile.status = "star_received";
+          profile.notes += ` Star detected ${new Date().toISOString().slice(0, 10)}, nudged for follow.`;
+          saveProfile(profile);
+          appendLog(profile.slug, profile.name, profile.issue_url, "⭐ starred · follow pending");
+          console.log(`    ✓ Status → star_received`);
+        }
+        transitions++;
+      }
+      // Already star_received — nudge was sent, don't repeat
+      continue;
+    }
 
-    postFollowUp(profile, hasFollowed, dryRun);
-
-    if (!dryRun) {
-      profile.status = "follow_up_sent";
-      const signalStr = [hasStarred && "starred", hasFollowed && "followed"].filter(Boolean).join(" + ");
-      profile.notes += ` Follow-up posted ${new Date().toISOString().slice(0, 10)} (${signalStr}).`;
-      saveProfile(profile);
-      if (hasFollowed) addToRising(profile);
-      appendLog(profile.slug, profile.name, profile.issue_url, `${hasStarred ? "starred ✓" : ""} ${hasFollowed ? "followed ✓" : "follow pending"}`);
-      console.log(`    ✓ Profile updated → follow_up_sent`);
-      if (hasFollowed) console.log(`    ✓ Added to skills/rising.json`);
-      else console.log(`    ⚠ Rising held — follow still pending`);
+    // Starred + followed — complete signal
+    if (profile.status === "outreach_sent" || profile.status === "star_received") {
+      console.log(`    → Full signal — posting live comment + adding to Rising`);
+      postComment(profile.issue_url, liveComment(profile), dryRun);
+      if (!dryRun) {
+        profile.status = "follow_up_sent";
+        profile.notes += ` Full signal ${new Date().toISOString().slice(0, 10)} (starred + followed${profile.has_replied ? " + replied" : ""}).`;
+        saveProfile(profile);
+        addToRising(profile);
+        appendLog(
+          profile.slug,
+          profile.name,
+          profile.issue_url,
+          `⭐ starred  👤 followed${profile.has_replied ? "  💬 replied" : ""}`
+        );
+        console.log(`    ✓ Status → follow_up_sent`);
+        console.log(`    ✓ Added to skills/rising.json`);
+      }
+      transitions++;
     }
   }
 
-  console.log(`\nDone: ${matched} new matches${dryRun ? " (dry run — nothing posted)" : ""}\n`);
+  console.log(`\nDone: ${transitions} transitions${dryRun ? " (dry run — nothing posted)" : ""}\n`);
 }
 
 main().catch((err) => {
