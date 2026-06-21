@@ -6,7 +6,7 @@
   "github_profile": "https://github.com/msaad00",
   "github_repo": "https://github.com/msaad00/agent-bom",
   "clawhub_url": "https://clawhub.ai/skills/agent-bom-registry",
-  "description": "MCP server security registry and trust assessment \u2014 look up servers in the 427+ server security metadata registry, run pre-install marketplace checks, batch...",
+  "description": "MCP server security registry and trust assessment — look up servers in the 427+ server security metadata registry, run pre-install marketplace checks, batch...",
   "license": "MIT-0",
   "version": "0.70.6",
   "downloads": 0,
@@ -21,5 +21,6 @@
   "status": "outreach_sent",
   "has_skill_md": true,
   "notes": "Joint review with agent-bom-runtime. Issue #714 on msaad00/agent-bom posted 2026-03-12. Repo starred.",
-  "issue_url": "https://github.com/msaad00/agent-bom/issues/714"
+  "issue_url": "https://github.com/msaad00/agent-bom/issues/714",
+  "has_replied": true
 }

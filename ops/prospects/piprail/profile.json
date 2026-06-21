@@ -21,5 +21,6 @@
   "status": "outreach_sent",
   "has_skill_md": true,
   "notes": "Issue #12 posted 2026-06-14. Repo starred on GitHub + ClawHub.",
-  "issue_url": "https://github.com/piprail/piprail/issues/12"
+  "issue_url": "https://github.com/piprail/piprail/issues/12",
+  "has_replied": true
 }

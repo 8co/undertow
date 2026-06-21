@@ -12,3 +12,4 @@
 | 2026-06-20 | Xerg | xerg | [xergai/xerg](https://github.com/xergai/xerg) | [#43](https://github.com/xergai/xerg/issues/43) | — |
 | 2026-06-20 | mainctrl | mainctrl | [iFeel-is-a-mouse/openclaw-teamdev-flow](https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow) | [#1](https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow/issues/1) | — |
 | 2026-06-16 | Follow-up: Better README | better-readme | — | [comment](https://github.com/Thomaszhou22/better-readme/issues/1) | starred ✓ |
+| 2026-06-21 | Signal: mainctrl | mainctrl | — | [issue](https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow/issues/1) | ⭐ starred  👤 followed  💬 replied |
