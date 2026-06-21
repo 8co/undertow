@@ -51,6 +51,7 @@ Skills that received an Undertow review, engaged with the feedback, and are bein
 | Skill | Author | What it does | Review |
 |-------|--------|-------------|--------|
 | [Better README](https://clawhub.ai/skills/better-readme) | @thomaszhou22 | README audit, quality scoring, templates, multilingual support | [#1](https://github.com/Thomaszhou22/better-readme/issues/1) |
+| [Xerg](https://clawhub.ai/skills/xerg) | @xerg | Audit OpenClaw, Hermes, and Cursor agent spend — local-first with CI gates | [#43](https://github.com/xergai/xerg/issues/43) |
 
 ## How It Works
 
