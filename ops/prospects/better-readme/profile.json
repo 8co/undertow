@@ -21,5 +21,6 @@
   "status": "follow_up_sent",
   "has_skill_md": true,
   "notes": "Issue #1 posted 2026-06-14. Repo starred on GitHub + ClawHub. Follow-up comment posted 2026-06-16.",
-  "issue_url": "https://github.com/Thomaszhou22/better-readme/issues/1"
+  "issue_url": "https://github.com/Thomaszhou22/better-readme/issues/1",
+  "has_replied": false
 }
