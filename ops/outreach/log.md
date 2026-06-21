@@ -10,6 +10,6 @@
 | 2026-06-16 | Remove Metadata | remove-metadata | [warren455/removemetadata-openclaw-skill](https://github.com/warren455/removemetadata-openclaw-skill) | [#1](https://github.com/warren455/removemetadata-openclaw-skill/issues/1) | — |
 | 2026-06-16 | Skill Vetting | phenixstar-skill-vetting | [PhenixStar/openclaw-skills-collection](https://github.com/PhenixStar/openclaw-skills-collection) | [#1](https://github.com/PhenixStar/openclaw-skills-collection/issues/1) | — |
 | 2026-06-20 | Xerg | xerg | [xergai/xerg](https://github.com/xergai/xerg) | [#43](https://github.com/xergai/xerg/issues/43) | — |
-| 2026-06-20 | mainctrl | mainctrl | [iFeel-is-a-mouse/openclaw-teamdev-flow](https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow) | [#1](https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow/issues/1) | — |
+| 2026-06-20 | mainctrl | mainctrl | [iFeel-is-a-mouse/mainctrl](https://github.com/iFeel-is-a-mouse/mainctrl) | [#1](https://github.com/iFeel-is-a-mouse/mainctrl/issues/1) | — |
 | 2026-06-16 | Follow-up: Better README | better-readme | — | [comment](https://github.com/Thomaszhou22/better-readme/issues/1) | starred ✓ |
-| 2026-06-21 | Signal: mainctrl | mainctrl | — | [issue](https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow/issues/1) | ⭐ starred  👤 followed  💬 replied |
+| 2026-06-21 | Signal: mainctrl | mainctrl | — | [issue](https://github.com/iFeel-is-a-mouse/mainctrl/issues/1) | ⭐ starred  👤 followed  💬 replied |

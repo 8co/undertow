@@ -19,11 +19,11 @@
       "name": "mainctrl",
       "clawhub_slug": "mainctrl",
       "clawhub_url": "https://clawhub.ai/skills/mainctrl",
-      "github_repo": "https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow",
+      "github_repo": "https://github.com/iFeel-is-a-mouse/mainctrl",
       "author": "@ifeel-is-a-mouse",
       "description": "Manage OpenClaw agent tool-call permissions. Intercepts write, edit, exec, process, and apply_patch from controlled agents, redirecting them to sub-agents.",
       "added": "2026-06-21",
-      "review_issue": "https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow/issues/1"
+      "review_issue": "https://github.com/iFeel-is-a-mouse/mainctrl/issues/1"
     },
     {
       "id": "xerg",
