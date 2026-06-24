@@ -2,6 +2,10 @@
  * Scan ClawHub for genuinely new skills with low install counts.
  * Creates prospect profiles in ops/prospects/{slug}/profile.json.
  *
+ * Calls the ClawHub REST API directly (https://clawhub.ai/api/v1/skills)
+ * instead of the CLI — avoids the CLI's all-or-nothing schema validator
+ * which crashes the entire batch when any item has an unexpected shape.
+ *
  * Filters on installsAllTime (actual installs), not downloads (page views).
  * Also filters by createdAt to target recently published skills only.
  *
@@ -13,7 +17,6 @@
  *   npx tsx scripts/scan-prospects.ts --dry-run            # print results without writing files
  */
 
-import { execSync } from "child_process";
 import { existsSync, mkdirSync, writeFileSync, readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
@@ -131,26 +134,22 @@ function parseArgs(): {
   return { maxInstalls, maxAgeDays, limit: Math.min(limit, 200), sort, dryRun };
 }
 
-function runClawhub(args: string): string {
-  const raw = execSync(`clawhub ${args}`, {
-    encoding: "utf-8",
-    timeout: 30_000,
-  });
-  const jsonStart = raw.indexOf("{");
-  if (jsonStart === -1) throw new Error(`No JSON in clawhub output: ${raw}`);
-  return raw.slice(jsonStart);
+const CLAWHUB_API = "https://clawhub.ai";
+
+async function explore(limit: number, sort: string): Promise<ExploreItem[]> {
+  const url = `${CLAWHUB_API}/api/v1/skills?limit=${limit}&sort=${sort}`;
+  const res = await fetch(url, { headers: { Accept: "application/json" } });
+  if (!res.ok) throw new Error(`ClawHub API error: ${res.status} ${res.statusText}`);
+  const data = await res.json() as { items?: ExploreItem[] };
+  return data.items ?? [];
 }
 
-function explore(limit: number, sort: string): ExploreItem[] {
-  const json = runClawhub(`explore --limit ${limit} --sort ${sort} --json`);
-  const parsed = JSON.parse(json);
-  return parsed.items ?? [];
-}
-
-function inspect(slug: string): InspectResult | null {
+async function inspect(slug: string): Promise<InspectResult | null> {
   try {
-    const json = runClawhub(`inspect ${slug} --json`);
-    return JSON.parse(json);
+    const url = `${CLAWHUB_API}/api/v1/skills/${slug}`;
+    const res = await fetch(url, { headers: { Accept: "application/json" } });
+    if (!res.ok) return null;
+    return await res.json() as InspectResult;
   } catch {
     console.error(`  ⚠ Failed to inspect ${slug}`);
     return null;
@@ -175,8 +174,8 @@ function buildProfile(
     github_repo: null,
     clawhub_url: `https://clawhub.ai/skills/${item.slug}`,
     description: item.summary,
-    license: detail.latestVersion.license,
-    version: item.latestVersion.version,
+    license: detail.latestVersion?.license ?? null,
+    version: item.latestVersion?.version ?? "1.0.0",
     downloads: item.stats.downloads,
     installs_all_time: item.stats.installsAllTime,
     installs_current: item.stats.installsCurrent,
@@ -220,7 +219,7 @@ async function main() {
   );
 
   console.log("Fetching skills from ClawHub...");
-  const items = explore(limit, sort);
+  const items = await explore(limit, sort);
   console.log(`  Found ${items.length} skills\n`);
 
   const candidates = items.filter(
@@ -245,7 +244,7 @@ async function main() {
 
     process.stdout.write(`  → ${item.displayName} (${item.slug})... `);
 
-    const detail = inspect(item.slug);
+    const detail = await inspect(item.slug);
     if (!detail) {
       failed++;
       continue;
