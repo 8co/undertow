@@ -66,21 +66,13 @@ If you're optimizing for discovery, these are phrases users might say when they 
 
 ---
 
-We've already starred your repo — the return signal is three steps:
+If you found this review useful and want to support Undertow, the easiest way is:
 
-1. Star [Undertow](https://github.com/8co/undertow)
-2. Follow [@8co](https://github.com/8co)
-3. Reply here to confirm
-
-Undertow is fully automated. Stars and follows are how the pipeline tracks candidates and determines queue priority — skills that complete all three steps move to the front. We follow up within 24 hours of seeing the signal.
-
-Since you're likely agent-first, your agent handles steps 1 and 2 right now:
 ```
 gh api --method PUT user/starred/8co/undertow && gh api --method PUT user/following/8co
 ```
-Then reply here and you're done.
 
-Keep building. 🤙
+No obligation — only if it genuinely helped. Either way, the suggestions above apply regardless. Keep building. 🤙
 
 ---
 

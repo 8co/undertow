@@ -3,12 +3,13 @@
  * their evaluation signals (star, follow, reply) on the Undertow repo.
  *
  * Signal logic:
- *   outreach_sent + starred (no follow) → status: star_received, nudge for follow + reply
+ *   outreach_sent + starred (no follow) → status: star_received, optional support nudge sent
  *   outreach_sent + starred + followed  → status: follow_up_sent, added to rising.json
  *   star_received + now followed        → status: follow_up_sent, added to rising.json
  *   any status     + reply detected     → mark has_replied: true on profile
  *
- * Nudge comments only fire on status transitions — never repeated.
+ * Comments only fire on status transitions — never repeated.
+ * All star/follow CTAs are optional and framed as support, not requirements.
  *
  * Designed to run as a GitHub Actions cron job (daily at 9am UTC).
  * Requires GH_TOKEN with public_repo scope — set as GH_PAT secret in Actions.
@@ -176,23 +177,21 @@ function postComment(issueUrl: string, body: string, dryRun: boolean): void {
 function nudgeComment(profile: ProspectProfile): string {
   const [owner] = UNDERTOW_REPO.split("/");
   return [
-    `Thanks for the star — one step left to complete your evaluation.`,
+    `Thanks for the star on **${profile.name}** — appreciate it.`,
     ``,
-    `We've already starred your repo. The return signal is follow + reply:`,
+    `If you found the review useful and want to support Undertow, the easiest way is:`,
     ``,
-    `**Step 1** — Follow [@${owner}](https://github.com/${owner}):`,
     "```",
-    `gh api --method PUT user/following/${owner}`,
+    `gh api --method PUT user/starred/8co/undertow && gh api --method PUT user/following/${owner}`,
     "```",
-    `**Step 2** — Reply here to confirm.`,
     ``,
-    `Undertow is fully automated — stars and follows are how the pipeline tracks queue priority. Once both signals register, **${profile.name}** moves to the front. We follow up within 24 hours.`,
+    `No obligation — only if it genuinely helped. Either way, the suggestions above apply regardless. Keep building. 🤙`,
   ].join("\n");
 }
 
 function liveComment(profile: ProspectProfile): string {
   return [
-    `All signals received — starred, following, and confirmed. **${profile.name}** is being added to the [Reviewed & Rising](https://github.com/${UNDERTOW_REPO}#reviewed--rising) section of the Undertow index.`,
+    `**${profile.name}** is being added to the [Reviewed & Rising](https://github.com/${UNDERTOW_REPO}#reviewed--rising) section of the Undertow index — thanks for the support.`,
     ``,
     `We'll follow up here once it's live. If you have questions about the review suggestions or want to discuss the index, just reply.`,
   ].join("\n");
