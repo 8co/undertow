@@ -24,6 +24,17 @@
       "description": "Manage OpenClaw agent tool-call permissions. Intercepts write, edit, exec, process, and apply_patch from controlled agents, redirecting them to sub-agents.",
       "added": "2026-06-21",
       "review_issue": "https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow/issues/1"
+    },
+    {
+      "id": "xerg",
+      "name": "Xerg",
+      "clawhub_slug": "xerg",
+      "clawhub_url": "https://clawhub.ai/skills/xerg",
+      "github_repo": "https://github.com/xergai/xerg",
+      "author": "@xerg",
+      "description": "Audit OpenClaw, Hermes, and Cursor spend in dollars. Local-first audits with provenance-aware findings, compare mode, CI gates, and optional hosted follow-up.",
+      "added": "2026-06-21",
+      "review_issue": "https://github.com/xergai/xerg/issues/43"
     }
   ]
 }
