@@ -44,6 +44,14 @@ New skills showing strong potential. Included early because they fill gaps nothi
 | [ReviewEvo](https://github.com/8co/review-evo) | @8co | Self-improving code reviewer that learns your codebase over time |
 | [OpenTangl](https://github.com/8co/opentangl) | @8co | Autonomous dev engine — vision in, shipped code out |
 
+## Reviewed & Rising
+
+Skills that received an Undertow review, engaged with the feedback, and are being tracked for inclusion in the curated index as adoption grows. See [`skills/rising.json`](skills/rising.json) for the full list.
+
+| Skill | Author | What it does | Review |
+|-------|--------|-------------|--------|
+| [Better README](https://clawhub.ai/skills/better-readme) | @thomaszhou22 | README audit, quality scoring, templates, multilingual support | [#1](https://github.com/Thomaszhou22/better-readme/issues/1) |
+
 ## How It Works
 
 1. You install Undertow (one time)
