@@ -25,7 +25,11 @@ The entire product is `skills/SKILL.md` + `skills/index.json`. The SKILL.md teac
 5. Bump the `updated` date in `index.json`
 
 ### Security Constraints
-- No `curl`, `wget`, or network-fetching commands in the SKILL.md itself (install uses curl, but that's agent-executed with user consent)
+This skill is published to ClawHub and scanned by OpenClaw and VirusTotal. To stay clean:
+- No `curl`, `wget`, or any network-fetching commands
 - No `eval`, `exec`, or dynamic code execution
+- No base64 encoding/decoding
 - No environment variable reading
 - No file operations outside `~/.cursor/skills/`
+- No obfuscated content — everything must be human-readable
+- Install uses `npx clawhub@latest install` only (the official ClawHub CLI)
