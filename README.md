@@ -85,7 +85,7 @@ Want your skill in the Undertow index? Open an issue with:
 - A one-line description
 - 3-5 intent phrases (what would a user say when they need this?)
 
-Skills are evaluated on: quality of SKILL.md, clear intent coverage, real adoption (downloads/stars), and whether they fill a gap in the current index.
+Skills are evaluated on: quality of SKILL.md, clear intent coverage, real adoption (installs/stars), and whether they fill a gap in the current index.
 
 ## License
 
