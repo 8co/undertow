@@ -4,7 +4,7 @@
   "author_handle": "@ifeel-is-a-mouse",
   "author_avatar": "https://avatars.githubusercontent.com/u/134820721?v=4",
   "github_profile": "https://github.com/iFeel-is-a-mouse",
-  "github_repo": "https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow",
+  "github_repo": "https://github.com/iFeel-is-a-mouse/mainctrl",
   "clawhub_url": "https://clawhub.ai/skills/mainctrl",
   "description": "Manage OpenClaw agent tool-call permissions. Intercepts write, edit, exec, process, and apply_patch from controlled agents, redirecting them to sub-agents.",
   "license": null,
@@ -20,7 +20,7 @@
   "discovered_at": "2026-06-20T20:55:00.000Z",
   "status": "follow_up_sent",
   "has_skill_md": true,
-  "issue_url": "https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow/issues/1",
+  "issue_url": "https://github.com/iFeel-is-a-mouse/mainctrl/issues/1",
   "notes": "Issue #1 posted 2026-06-20. Repo starred on GitHub + ClawHub. Full signal 2026-06-21 (starred + followed + replied).",
   "has_replied": true
 }
