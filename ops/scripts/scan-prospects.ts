@@ -1,13 +1,16 @@
 /**
- * Scan ClawHub for new skills with low download counts.
+ * Scan ClawHub for genuinely new skills with low install counts.
  * Creates prospect profiles in ops/prospects/{slug}/profile.json.
  *
+ * Filters on installsAllTime (actual installs), not downloads (page views).
+ * Also filters by createdAt to target recently published skills only.
+ *
  * Usage:
- *   npx tsx scripts/scan-prospects.ts                    # default: newest skills, max downloads 3, limit 50
- *   npx tsx scripts/scan-prospects.ts --max-downloads 5  # custom threshold
- *   npx tsx scripts/scan-prospects.ts --limit 100        # scan more
- *   npx tsx scripts/scan-prospects.ts --sort trending     # sort by trending instead of newest
- *   npx tsx scripts/scan-prospects.ts --dry-run           # print results without writing files
+ *   npx tsx scripts/scan-prospects.ts                      # default: newest, max 5 installs, created within 60 days, limit 100
+ *   npx tsx scripts/scan-prospects.ts --max-installs 10    # custom install threshold
+ *   npx tsx scripts/scan-prospects.ts --max-age-days 30    # only skills created in last 30 days
+ *   npx tsx scripts/scan-prospects.ts --limit 200          # scan more
+ *   npx tsx scripts/scan-prospects.ts --dry-run            # print results without writing files
  */
 
 import { execSync } from "child_process";
@@ -94,20 +97,25 @@ interface ProspectProfile {
 }
 
 function parseArgs(): {
-  maxDownloads: number;
+  maxInstalls: number;
+  maxAgeDays: number;
   limit: number;
   sort: string;
   dryRun: boolean;
 } {
   const args = process.argv.slice(2);
-  let maxDownloads = 3;
-  let limit = 50;
+  let maxInstalls = 5;
+  let maxAgeDays = 60;
+  let limit = 100;
   let sort = "newest";
   let dryRun = false;
 
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === "--max-downloads" && args[i + 1]) {
-      maxDownloads = parseInt(args[i + 1], 10);
+    if (args[i] === "--max-installs" && args[i + 1]) {
+      maxInstalls = parseInt(args[i + 1], 10);
+      i++;
+    } else if (args[i] === "--max-age-days" && args[i + 1]) {
+      maxAgeDays = parseInt(args[i + 1], 10);
       i++;
     } else if (args[i] === "--limit" && args[i + 1]) {
       limit = parseInt(args[i + 1], 10);
@@ -120,7 +128,7 @@ function parseArgs(): {
     }
   }
 
-  return { maxDownloads, limit: Math.min(limit, 200), sort, dryRun };
+  return { maxInstalls, maxAgeDays, limit: Math.min(limit, 200), sort, dryRun };
 }
 
 function runClawhub(args: string): string {
@@ -149,26 +157,13 @@ function inspect(slug: string): InspectResult | null {
   }
 }
 
-function fetchSkillMd(slug: string): boolean {
-  try {
-    const output = execSync(`clawhub inspect ${slug} --file SKILL.md`, {
-      encoding: "utf-8",
-      timeout: 15_000,
-    });
-    return output.includes("#") || output.includes("---");
-  } catch {
-    return false;
-  }
-}
-
 function alreadyProfiled(slug: string): boolean {
   return existsSync(join(PROSPECTS_DIR, slug, "profile.json"));
 }
 
 function buildProfile(
   item: ExploreItem,
-  detail: InspectResult,
-  hasSkillMd: boolean
+  detail: InspectResult
 ): ProspectProfile {
   const handle = detail.owner.handle;
   return {
@@ -192,9 +187,17 @@ function buildProfile(
     updated_at: new Date(item.updatedAt).toISOString(),
     discovered_at: new Date().toISOString(),
     status: "new",
-    has_skill_md: hasSkillMd,
+    has_skill_md: true,
     notes: "",
   };
+}
+
+// Rough English-language check — skip skills where the summary is predominantly
+// non-ASCII (Chinese, Japanese, Arabic, etc.). These can't be meaningfully
+// reviewed or reached via GitHub issues in English.
+function looksEnglish(text: string): boolean {
+  const nonAscii = (text.match(/[^\x00-\x7F]/g) ?? []).length;
+  return nonAscii / text.length < 0.15;
 }
 
 function writeProfile(profile: ProspectProfile): void {
@@ -207,20 +210,27 @@ function writeProfile(profile: ProspectProfile): void {
 }
 
 async function main() {
-  const { maxDownloads, limit, sort, dryRun } = parseArgs();
+  const { maxInstalls, maxAgeDays, limit, sort, dryRun } = parseArgs();
+
+  const cutoffMs = Date.now() - maxAgeDays * 24 * 60 * 60 * 1000;
 
   console.log(
     `\n🌊 Undertow Prospect Scanner\n` +
-      `   Sort: ${sort} | Max downloads: ${maxDownloads} | Limit: ${limit} | Dry run: ${dryRun}\n`
+      `   Sort: ${sort} | Max installs: ${maxInstalls} | Created within: ${maxAgeDays} days | Limit: ${limit} | Dry run: ${dryRun}\n`
   );
 
   console.log("Fetching skills from ClawHub...");
   const items = explore(limit, sort);
   console.log(`  Found ${items.length} skills\n`);
 
-  const candidates = items.filter((s) => s.stats.downloads <= maxDownloads);
+  const candidates = items.filter(
+    (s) =>
+      s.stats.installsAllTime <= maxInstalls &&
+      s.createdAt >= cutoffMs &&
+      looksEnglish(s.summary)
+  );
   console.log(
-    `  ${candidates.length} with ≤ ${maxDownloads} downloads\n`
+    `  ${candidates.length} created within ${maxAgeDays} days with ≤ ${maxInstalls} installs (English)\n`
   );
 
   let created = 0;
@@ -241,13 +251,12 @@ async function main() {
       continue;
     }
 
-    const hasSkillMd = fetchSkillMd(item.slug);
-    const profile = buildProfile(item, detail, hasSkillMd);
+    const profile = buildProfile(item, detail);
 
     if (dryRun) {
+      const ageDays = Math.floor((Date.now() - item.createdAt) / 86400000);
       console.log(
-        `${profile.downloads} downloads, @${detail.owner.handle}, ` +
-          `SKILL.md: ${hasSkillMd ? "yes" : "no"}`
+        `${profile.installs_all_time} installs, created ${ageDays}d ago, @${detail.owner.handle}`
       );
     } else {
       writeProfile(profile);
