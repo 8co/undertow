@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-06-16",
+  "updated": "2026-06-21",
   "description": "Skills reviewed by Undertow that engaged with our feedback. Being tracked for inclusion in the curated index as adoption grows.",
   "skills": [
     {
@@ -13,6 +13,17 @@
       "description": "Create, audit, and optimize project README files with quality scoring, template matching, and multilingual support.",
       "added": "2026-06-16",
       "review_issue": "https://github.com/Thomaszhou22/better-readme/issues/1"
+    },
+    {
+      "id": "mainctrl",
+      "name": "mainctrl",
+      "clawhub_slug": "mainctrl",
+      "clawhub_url": "https://clawhub.ai/skills/mainctrl",
+      "github_repo": "https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow",
+      "author": "@ifeel-is-a-mouse",
+      "description": "Manage OpenClaw agent tool-call permissions. Intercepts write, edit, exec, process, and apply_patch from controlled agents, redirecting them to sub-agents.",
+      "added": "2026-06-21",
+      "review_issue": "https://github.com/iFeel-is-a-mouse/openclaw-teamdev-flow/issues/1"
     }
   ]
 }
