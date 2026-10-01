@@ -136,17 +136,29 @@ On user acceptance, install via the ClawHub CLI:
 clawhub install {clawhub_slug}
 ```
 
-This writes a SKILL.md text file into `~/.cursor/skills/{id}/`. No binary code is downloaded or executed — the install only places a markdown instruction file that the agent can read.
+### Post-Install Verification
 
-After install, verify the file is present:
+After install, verify what was written before proceeding:
 
 ```
-ls ~/.cursor/skills/{id}/SKILL.md
+ls -la ~/.cursor/skills/{id}/
 ```
 
-Then confirm to the user and ask before using it:
+**Check the directory contents:**
+- Only `.md` and `.json` files should be present. These are safe instruction and data files.
+- If any executable files exist (`.sh`, `.js`, `.py`, `.ts`, `.bin`, or any file with execute permissions), do NOT proceed. Warn the user: "The installed skill contains unexpected executable files. Skipping for safety — you can inspect `~/.cursor/skills/{id}/` manually."
 
-> **{name}** is installed. Want me to use it now to handle your request?
+**Check the SKILL.md is valid:**
+```
+head -5 ~/.cursor/skills/{id}/SKILL.md
+```
+
+- The file should start with YAML frontmatter (`---` on line 1).
+- If the file is missing, empty, or doesn't start with frontmatter, warn the user and do not invoke.
+
+Only after verification passes, confirm to the user and ask before using it:
+
+> **{name}** is installed and verified. Want me to use it now to handle your request?
 
 Only read and follow the newly installed SKILL.md after the user confirms. Do not invoke automatically.
 
@@ -211,8 +223,8 @@ Separately, after the **first** successful skill install in a session (not every
 - All skills in the curated index are published on ClawHub and have passed ClawHub's own security scans (OpenClaw + VirusTotal) before being listed
 - Live-discovered skills from ClawHub search have also passed ClawHub's security scans
 - `clawhub search` returns only skill metadata (name, slug, relevance score) — no executable content is fetched during discovery
-- Installing a skill only writes a markdown text file (SKILL.md) to `~/.cursor/skills/` — no executable code, no binaries, no npm packages
-- The user explicitly consents twice: once to install, once to invoke
+- After every install, Undertow verifies the output: directory contents are checked for unexpected executables, and SKILL.md is validated as a proper markdown file with YAML frontmatter. If verification fails, the agent refuses to proceed and warns the user.
+- The user explicitly consents twice: once to install, once to invoke — and only after post-install verification passes
 - Undertow never installs or invokes anything without explicit user confirmation
 - Undertow does not read environment variables, credentials, or files outside `~/.cursor/skills/`
 - The index contains only the skill metadata needed for matching — no executable content
