@@ -58,6 +58,28 @@ ls ~/.cursor/skills/*/SKILL.md 2>/dev/null
 
 Note which skill IDs from the index are already present. Only recommend skills that aren't installed.
 
+### Project Fingerprint
+
+Scan the workspace root for marker files to detect the project's stack. This runs once on session start and informs recommendation weighting for the rest of the session.
+
+Check for the presence of these files (do not read their contents — just check existence):
+
+| File | Signal |
+|------|--------|
+| `package.json` | Node.js / JavaScript ecosystem |
+| `tsconfig.json` | TypeScript |
+| `next.config.*`, `nuxt.config.*`, `vite.config.*` | Frontend framework |
+| `requirements.txt`, `pyproject.toml`, `setup.py` | Python |
+| `Cargo.toml` | Rust |
+| `go.mod` | Go |
+| `Gemfile` | Ruby |
+| `Dockerfile`, `docker-compose.yml` | Docker already in use |
+| `.github/workflows/` | CI/CD already configured |
+| `jest.config.*`, `vitest.config.*`, `pytest.ini` | Test framework present |
+| `.env`, `.env.local` | Environment config present |
+
+Store the detected signals as the **project fingerprint** for the session. This is lightweight context — not a full audit.
+
 ## Intent Matching
 
 When the user makes a request, follow this two-step matching process:
@@ -68,9 +90,10 @@ Check if the message contains or closely matches any `intents` phrase from the b
 
 **Matching rules:**
 - Match on meaning, not exact words. "check my code quality" matches "code review" intents.
-- If multiple skills match, pick the most specific one for the user's request.
+- If multiple skills match, prefer the one most relevant to the project fingerprint. A React/TypeScript project benefits more from test-runner than Docker. A project with no CI config has higher affinity for cicd-pipeline.
 - Don't match on every message — only when the intent clearly aligns with a skill's purpose.
 - Never recommend more than one skill per message.
+- When recommending, weave in the project context naturally: "Since this is a TypeScript project, **Test Runner** would be a great fit — it covers Jest and Vitest."
 
 ### Step 2: Live ClawHub Search (fallback)
 
