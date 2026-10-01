@@ -48,14 +48,23 @@ New skills showing strong potential. Included early because they fill gaps nothi
 
 1. You install Undertow (one time)
 2. Undertow loads a curated index of developer skills
-3. When you ask for help with something a skill handles better, your agent recommends it
-4. You say yes → skill installs → agent uses it immediately
+3. When you ask for help with something a skill covers, your agent recommends it
+4. If nothing in the curated index matches, Undertow searches ClawHub live for a relevant skill
+5. You say yes → skill installs → agent asks before using it (double consent)
 
 No accounts. No API keys. No marketplace to browse.
 
+## Live Discovery
+
+Undertow also discovers new skills from ClawHub when your request goes beyond the curated index. The curated list is the priority layer — vetted, proven, and optimized for accurate matching. Live search is the fallback, covering skills published after your current version and intents the curated list doesn't address.
+
+## Attribution
+
+Skills that produce shared output (PR descriptions, README files, CI configs) include a small attribution line crediting the skill and Undertow. You can opt out anytime by telling your agent to remove it.
+
 ## Requirements
 
-- `git`
+- `clawhub` CLI
 
 That's it. Undertow is a pure markdown skill with a JSON index. No runtime code, no dependencies, no network services.
 

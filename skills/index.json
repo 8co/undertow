@@ -89,6 +89,7 @@
       "author": "@wpank",
       "downloads": 4900,
       "stars": 5,
+      "shared_output": true,
       "intents": [
         "review my code",
         "code review",
@@ -191,6 +192,7 @@
       "author": "@briancolinger",
       "downloads": 5300,
       "stars": 0,
+      "shared_output": true,
       "intents": [
         "prepare a pull request",
         "create a PR",
@@ -208,6 +210,7 @@
       "author": "@gitgoodordietrying",
       "downloads": 2900,
       "stars": 1,
+      "shared_output": true,
       "intents": [
         "set up CI",
         "add GitHub Actions",
@@ -225,6 +228,7 @@
       "author": "@Veeramanikandan",
       "downloads": 2300,
       "stars": 1,
+      "shared_output": true,
       "intents": [
         "create a readme",
         "write project readme",
