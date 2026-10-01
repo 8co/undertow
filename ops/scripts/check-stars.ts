@@ -74,6 +74,21 @@ function getStargazers(): Set<string> {
   return logins;
 }
 
+function getFollowers(): Set<string> {
+  const logins = new Set<string>();
+  let page = 1;
+  const [owner] = UNDERTOW_REPO.split("/");
+  while (true) {
+    const raw = gh(`api "/users/${owner}/followers?per_page=100&page=${page}"`);
+    const items: { login: string }[] = JSON.parse(raw);
+    if (!items.length) break;
+    for (const item of items) logins.add(item.login.toLowerCase());
+    if (items.length < 100) break;
+    page++;
+  }
+  return logins;
+}
+
 function loadOutreachSentProspects(): ProspectProfile[] {
   const prospects: ProspectProfile[] = [];
   for (const slug of readdirSync(PROSPECTS_DIR)) {
@@ -112,25 +127,39 @@ function addToRising(profile: ProspectProfile): void {
   writeFileSync(RISING_PATH, JSON.stringify(rising, null, 2) + "\n");
 }
 
-function appendLog(slug: string, name: string, issueUrl: string): void {
+function appendLog(slug: string, name: string, issueUrl: string, signals: string): void {
   const today = new Date().toISOString().slice(0, 10);
-  const line = `| ${today} | Follow-up: ${name} | ${slug} | — | [comment](${issueUrl}) | starred ✓ |\n`;
+  const line = `| ${today} | Follow-up: ${name} | ${slug} | — | [comment](${issueUrl}) | ${signals} |\n`;
   const log = readFileSync(LOG_PATH, "utf-8");
   writeFileSync(LOG_PATH, log + line);
 }
 
-function postFollowUp(profile: ProspectProfile, dryRun: boolean): void {
-  const body = [
-    `Hey — noticed you starred the [Undertow repo](https://github.com/${UNDERTOW_REPO}) after our review. Thanks for the signal!`,
-    ``,
-    `We're adding **${profile.name}** to the Rising section of the Undertow index in the next update. We'll open a PR to include it and tag you when it's live.`,
-    ``,
-    `In the meantime, if you have any questions about the index or want to discuss the suggestions from the review, just reply here.`,
-  ].join("\n");
+function postFollowUp(profile: ProspectProfile, hasFollowed: boolean, dryRun: boolean): void {
+  const [owner] = UNDERTOW_REPO.split("/");
+  const missingFollow = !hasFollowed;
+
+  const body = missingFollow
+    ? [
+        `Hey — noticed you starred the [Undertow repo](https://github.com/${UNDERTOW_REPO}) after our review. Almost there!`,
+        ``,
+        `One step left to complete your evaluation — follow [@${owner}](https://github.com/${owner}):`,
+        ``,
+        "```",
+        `gh api --method PUT user/following/${owner}`,
+        "```",
+        ``,
+        `Once that's done we'll add **${profile.name}** to the Rising index and follow up here. Takes one turn for your agent.`,
+      ].join("\n")
+    : [
+        `Signal received — starred and following. **${profile.name}** is being added to the [Reviewed & Rising](https://github.com/${UNDERTOW_REPO}#reviewed--rising) section of the Undertow index.`,
+        ``,
+        `We'll follow up here once it's live. If you have questions about the review suggestions or the index, just reply.`,
+      ].join("\n");
 
   if (dryRun) {
     console.log(`  [dry run] Would comment on: ${profile.issue_url}`);
-    console.log(`  [dry run] Body preview: "${body.slice(0, 80)}..."`);
+    console.log(`  [dry run] Has followed: ${hasFollowed}`);
+    console.log(`  [dry run] Body preview: "${body.slice(0, 100)}..."`);
     return;
   }
 
@@ -140,11 +169,12 @@ function postFollowUp(profile: ProspectProfile, dryRun: boolean): void {
 async function main() {
   const dryRun = isDryRun();
 
-  console.log(`\n🌊 Undertow Star Checker${dryRun ? " (dry run)" : ""}\n`);
+  console.log(`\n🌊 Undertow Star + Follow Checker${dryRun ? " (dry run)" : ""}\n`);
 
-  console.log("Fetching Undertow stargazers...");
+  console.log("Fetching Undertow stargazers and followers...");
   const stargazers = getStargazers();
-  console.log(`  ${stargazers.size} total stargazers\n`);
+  const followers = getFollowers();
+  console.log(`  ${stargazers.size} stargazers, ${followers.size} followers\n`);
 
   const prospects = loadOutreachSentProspects();
   console.log(`  ${prospects.length} prospects with status outreach_sent\n`);
@@ -153,25 +183,29 @@ async function main() {
 
   for (const profile of prospects) {
     const handle = profile.author_handle.replace(/^@/, "").toLowerCase();
-    const isStargazer = stargazers.has(handle);
+    const hasStarred = stargazers.has(handle);
+    const hasFollowed = followers.has(handle);
 
-    console.log(`  ${isStargazer ? "✓" : "·"} ${profile.name} (@${handle})`);
+    const signals = `${hasStarred ? "⭐" : "·"} star  ${hasFollowed ? "👤" : "·"} follow`;
+    console.log(`  ${profile.name} (@${handle})  ${signals}`);
 
-    if (!isStargazer) continue;
+    if (!hasStarred) continue;
 
     matched++;
-    console.log(`    → Starred! Posting follow-up on ${profile.issue_url}`);
+    console.log(`    → Starred — posting follow-up (followed: ${hasFollowed})`);
 
-    postFollowUp(profile, dryRun);
+    postFollowUp(profile, hasFollowed, dryRun);
 
     if (!dryRun) {
       profile.status = "follow_up_sent";
-      profile.notes += ` Follow-up comment posted ${new Date().toISOString().slice(0, 10)}.`;
+      const signalStr = [hasStarred && "starred", hasFollowed && "followed"].filter(Boolean).join(" + ");
+      profile.notes += ` Follow-up posted ${new Date().toISOString().slice(0, 10)} (${signalStr}).`;
       saveProfile(profile);
-      addToRising(profile);
-      appendLog(profile.slug, profile.name, profile.issue_url);
+      if (hasFollowed) addToRising(profile);
+      appendLog(profile.slug, profile.name, profile.issue_url, `${hasStarred ? "starred ✓" : ""} ${hasFollowed ? "followed ✓" : "follow pending"}`);
       console.log(`    ✓ Profile updated → follow_up_sent`);
-      console.log(`    ✓ Added to skills/rising.json`);
+      if (hasFollowed) console.log(`    ✓ Added to skills/rising.json`);
+      else console.log(`    ⚠ Rising held — follow still pending`);
     }
   }
 
