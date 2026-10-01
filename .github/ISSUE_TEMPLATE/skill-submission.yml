@@ -1,0 +1,69 @@
+name: Submit a Skill
+description: Suggest a skill for the Undertow curated index
+title: "Skill Submission: "
+labels: ["submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for submitting a skill to the Undertow index! We review every submission and add skills that meet our curation criteria: clear purpose, quality SKILL.md, real adoption, and a gap in the current index.
+
+  - type: input
+    id: slug
+    attributes:
+      label: ClawHub Slug
+      description: The skill's slug on ClawHub (e.g. "debug-pro")
+      placeholder: my-skill
+    validations:
+      required: true
+
+  - type: input
+    id: repo
+    attributes:
+      label: GitHub Repo (optional)
+      description: Link to the source repo if public
+      placeholder: https://github.com/user/repo
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What does the skill do?
+      description: One or two sentences describing the skill's purpose
+    validations:
+      required: true
+
+  - type: textarea
+    id: intents
+    attributes:
+      label: Intent Phrases
+      description: "3-5 things a user would say when they need this skill"
+      placeholder: |
+        - "help me debug this"
+        - "why is this broken"
+        - "find the bug"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Code Quality
+        - Testing
+        - Security
+        - DevOps / CI/CD
+        - Documentation
+        - Git / Version Control
+        - Performance
+        - API Development
+        - Containerization
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else?
+      description: Why this skill would be a good fit for the index, what gap it fills, etc.
