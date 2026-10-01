@@ -20,5 +20,6 @@
   "discovered_at": "2026-03-12T21:57:10.581Z",
   "status": "outreach_sent",
   "has_skill_md": true,
-  "notes": "Issue #1 posted 2026-03-12. Repo starred."
+  "notes": "Issue #1 posted 2026-03-12. Repo starred.",
+  "issue_url": "https://github.com/mrjessek/shang-tsung/issues/1"
 }

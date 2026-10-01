@@ -6,7 +6,7 @@
   "github_profile": "https://github.com/msaad00",
   "github_repo": "https://github.com/msaad00/agent-bom",
   "clawhub_url": "https://clawhub.ai/skills/agent-bom-runtime",
-  "description": "AI runtime security monitoring — context graph analysis, runtime audit log correlation with CVE findings, and vulnerability analytics queries. Use when the u...",
+  "description": "AI runtime security monitoring \u2014 context graph analysis, runtime audit log correlation with CVE findings, and vulnerability analytics queries. Use when the u...",
   "license": "MIT-0",
   "version": "0.70.6",
   "downloads": 0,
@@ -20,5 +20,6 @@
   "discovered_at": "2026-03-12T21:57:14.643Z",
   "status": "outreach_sent",
   "has_skill_md": true,
-  "notes": "Joint review with agent-bom-registry. Issue #714 on msaad00/agent-bom posted 2026-03-12. Repo starred."
+  "notes": "Joint review with agent-bom-registry. Issue #714 on msaad00/agent-bom posted 2026-03-12. Repo starred.",
+  "issue_url": "https://github.com/msaad00/agent-bom/issues/714"
 }
