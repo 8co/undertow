@@ -27,8 +27,7 @@ const PROSPECTS_DIR = join(__dirname, "..", "prospects");
 interface SkillStats {
   comments: number;
   downloads: number;
-  installsAllTime: number;
-  installsCurrent: number;
+  installs: number;
   stars: number;
   versions: number;
 }
@@ -177,8 +176,8 @@ function buildProfile(
     license: detail.latestVersion?.license ?? null,
     version: item.latestVersion?.version ?? "1.0.0",
     downloads: item.stats.downloads,
-    installs_all_time: item.stats.installsAllTime,
-    installs_current: item.stats.installsCurrent,
+    installs_all_time: item.stats.installs,
+    installs_current: item.stats.installs,
     stars: item.stats.stars,
     versions: item.stats.versions,
     comments: item.stats.comments,
@@ -224,7 +223,7 @@ async function main() {
 
   const candidates = items.filter(
     (s) =>
-      s.stats.installsAllTime <= maxInstalls &&
+      s.stats.installs <= maxInstalls &&
       s.createdAt >= cutoffMs &&
       looksEnglish(s.summary)
   );
@@ -255,7 +254,7 @@ async function main() {
     if (dryRun) {
       const ageDays = Math.floor((Date.now() - item.createdAt) / 86400000);
       console.log(
-        `${profile.installs_all_time} installs, created ${ageDays}d ago, @${detail.owner.handle}`
+        `${item.stats.installs} installs, created ${ageDays}d ago, @${detail.owner.handle}`
       );
     } else {
       writeProfile(profile);
